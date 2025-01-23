@@ -6,59 +6,78 @@
       </h2>
     </template>
 
-    <div class="py-12">
+    <div class="py-4">
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
           <div class="p-6 bg-white border-b border-gray-200">
-            <form @submit.prevent="searchProducts" class="mb-4 flex space-x-4">
-              <input
-                type="text"
-                v-model="filters.search"
-                placeholder="Search Product Name"
-                class="border px-4 py-2"
-              />
-              <select
-                v-model="filters.category"
-                class="border px-4 py-2"
-                @change="searchProducts"
-              >
-                <option value="">All</option>
-                <option
-                  v-for="category in categories"
-                  :key="category.name"
-                  :value="category.name"
+            <!-- Form and buttons container -->
+            <div class="mb-4 flex justify-between items-center">
+              <!-- Left: Search form and select box -->
+              <form @submit.prevent="searchProducts" class="flex space-x-4">
+                <input
+                  type="text"
+                  v-model="filters.search"
+                  placeholder="Cari Barang"
+                  class="border px-4 py-1 text-sm"
+                />
+                <select
+                  v-model="filters.category"
+                  class="border px-4 py-1 text-sm"
+                  @change="searchProducts"
                 >
-                  {{ category.name }}
-                </option>
-              </select>
-              <button type="submit" class="bg-blue-500 text-white px-4 py-2">
-                Search
-              </button>
-            </form>
+                  <option value="">Semua</option>
+                  <option
+                    v-for="category in categories"
+                    :key="category.name"
+                    :value="category.name"
+                  >
+                    {{ category.name }}
+                  </option>
+                </select>
+              </form>
 
-            <!-- Tombol Export untuk data yang difilter -->
-            <button
-              @click="exportToExcel()"
-              class="bg-green-500 text-white px-4 py-2 mb-4"
-            >
-              Export Filtered Data
-            </button>
+              <!-- Right: Export and Add buttons -->
+              <div class="flex space-x-2">
+                <button
+                  @click="exportToExcel()"
+                  class="bg-green-600 text-white px-2 py-1 text-sm"
+                >
+                  Export Excle
+                </button>
+                <button
+                  @click="addProduct()"
+                  class="bg-red-500 text-white px-2 py-1 text-sm"
+                >
+                  Tambah Produk
+                </button>
+              </div>
+            </div>
 
             <table
-              class="table-auto w-full border-collapse border border-gray-200"
+              class="table-auto w-full border-collapse border border-gray-200 text-sm"
             >
               <thead>
                 <tr>
                   <th class="border px-4 py-2">#</th>
+                  <th class="border px-2 py-1">Image</th>
                   <th class="border px-4 py-2">Name</th>
                   <th class="border px-4 py-2">Category</th>
                   <th class="border px-4 py-2">Price</th>
                   <th class="border px-4 py-2">Price Buy</th>
+                  <th class="border px-4 py-2">Stok Produk</th>
+                  <th class="border px-2 py-1">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="(product, index) in products.data" :key="product.id">
                   <td class="border px-4 py-2">{{ index + 1 }}</td>
+                  <td class="border px-2 py-1">
+                    <img
+                      src="/img/image-2.png"
+                      alt="Product Image"
+                      class="w-10 object-cover"
+                    />
+                  </td>
                   <td class="border px-4 py-2">{{ product.name }}</td>
                   <td class="border px-4 py-2">{{ product.category.name }}</td>
                   <td class="border px-4 py-2">
@@ -67,22 +86,41 @@
                   <td class="border px-4 py-2">
                     {{ formatRupiah(product.price_buy) }}
                   </td>
+                  <td class="border px-4 py-2">Stok Produk</td>
+                  <td class="border px-2 py-1">
+                    <!-- Tombol Edit dan Hapus -->
+                    <button
+                      @click="deleteProduct(product.id)"
+                      class="px-1 text-xs rounded"
+                    >
+                      <img src="/img/delete.png" alt="Delete" class="w-4" />
+                    </button>
+                    <button
+                      @click="addProduct(product.id)"
+                      class="px-1 text-xs rounded ml-2"
+                    >
+                      <img src="/img/edit.png" alt="Edit" class="w-4" />
+                    </button>
+                  </td>
                 </tr>
               </tbody>
             </table>
 
-            <div class="mt-4">
+            <div class="mt-4 flex justify-between items-center">
+              <div class="text-sm">
+                Show {{ products.per_page }} From {{ products.total }}
+              </div>
               <button
                 v-if="products.prev_page_url"
                 @click="fetchProducts(products.prev_page_url)"
-                class="mr-2 bg-gray-500 text-white px-4 py-2"
+                class="mr-2 bg-gray-500 text-white px-4 py-1 text-sm"
               >
                 Previous
               </button>
               <button
                 v-if="products.next_page_url"
                 @click="fetchProducts(products.next_page_url)"
-                class="bg-gray-500 text-white px-4 py-2"
+                class="bg-gray-500 text-white px-4 py-1 text-sm"
               >
                 Next
               </button>
@@ -110,6 +148,7 @@ export default {
       category: "",
     });
     const categories = ref([]);
+    const iconUrl = "/img/Package.png";
 
     // Fungsi untuk fetch kategori
     const fetchCategories = async () => {
@@ -158,6 +197,27 @@ export default {
         link.click();
       } catch (error) {
         console.error("Error exporting data:", error);
+      }
+    };
+
+    const addProduct = (params) => {
+      console.log(params, "ADD");
+    };
+
+    const deleteProduct = async (productId) => {
+      console.log("Delete product", productId);
+      try {
+        // Menampilkan konfirmasi sebelum menghapus
+        if (confirm(`Apakah anda yakin data akan dihapus ?`)) {
+          const response = await axios.delete(`/api/products/${productId}`);
+          // jika berhasil panggil products
+          fetchProducts();
+
+          alert("Product deleted successfully");
+        }
+      } catch (error) {
+        console.error("Error deleting product:", error);
+        alert("Failed to delete product");
       }
     };
 
@@ -219,6 +279,9 @@ export default {
       formatRupiah,
       exportToExcel,
       categories,
+      addProduct,
+      iconUrl,
+      deleteProduct,
     };
   },
 };

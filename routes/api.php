@@ -20,5 +20,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 Route::get('/products', [ProductController::class, 'apiIndex']);
+Route::delete('products/{product}', [ProductController::class, 'destroy']);
+
 Route::get('/products/export', [ProductExportController::class, 'export']);
 Route::get('/categories', [ProductController::class, 'getCategories']);

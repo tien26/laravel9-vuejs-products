@@ -29,4 +29,20 @@ class ProductController extends Controller
         $categories = Category::all(); // Ambil semua kategori
         return response()->json($categories);
     }
+
+    public function destroy($productId)
+    {
+        // Mencari produk berdasarkan ID
+        $product = Product::find($productId);
+
+        if (!$product) {
+            return response()->json(['message' => 'Product not found'], 404);
+        }
+
+        // Menghapus produk
+        $product->delete();
+
+        // Mengembalikan respons sukses
+        return response()->json(['message' => 'Product deleted successfully']);
+    }
 }

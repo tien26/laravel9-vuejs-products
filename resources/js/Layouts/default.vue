@@ -1,9 +1,6 @@
 <script setup>
 import { ref } from "vue";
 import { Link } from "@inertiajs/vue3";
-
-// Deklarasi properti untuk state sidebar
-const isSidebarOpen = ref(true);
 </script>
 
 <template>
@@ -11,19 +8,13 @@ const isSidebarOpen = ref(true);
     <!-- Sidebar -->
     <div
       :class="{
-        'w-60': isSidebarOpen,
+        'w-64': isSidebarOpen,
         'w-16': !isSidebarOpen,
       }"
       class="bg-red-500 text-white flex flex-col transition-all duration-300 ease-in-out"
     >
       <div class="h-16 flex items-center justify-between px-4">
-        <span
-          v-if="isSidebarOpen"
-          class="flex items-center text-lg font-semibold"
-        >
-          <img class="m-2" src="/img/Handbag.png" alt="My Icon" width="20" />
-          SIMS WEB APP
-        </span>
+        <span v-if="isSidebarOpen" class="text-lg font-semibold"> MyApp </span>
         <button
           @click="isSidebarOpen = !isSidebarOpen"
           class="p-2 rounded-md hover:bg-red-600"
@@ -61,54 +52,77 @@ const isSidebarOpen = ref(true);
         </button>
       </div>
 
-      <!-- Sidebar Navigation -->
       <nav class="mt-4 flex flex-col space-y-2">
-        <!-- Dashboard Menu -->
         <Link
-          :href="route('products')"
-          :class="{
-            'bg-white/50 text-white-500': route().current('products'),
-            'hover:bg-red-600': !route().current('products'),
-          }"
-          class="flex items-center space-x-2 px-4 py-2 rounded transition"
+          :href="route('dashboard')"
+          class="flex items-center space-x-2 px-4 py-2 hover:bg-red-600 transition"
         >
-          <img src="/img/Package.png" alt="My Icon" width="20" />
-          <span v-if="isSidebarOpen">Produk</span>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M3 10h11M9 21v-4a3 3 0 00-3-3H5a3 3 0 00-3 3v4h14z"
+            />
+          </svg>
+          <span v-if="isSidebarOpen">Dashboard</span>
         </Link>
 
-        <!-- Profile Menu -->
         <Link
           :href="route('profile.edit')"
-          :class="{
-            'bg-white/50 text-white-500': route().current('profile.edit'),
-            'hover:bg-red-600': !route().current('profile.edit'),
-          }"
-          class="flex items-center space-x-2 px-4 py-2 rounded transition"
+          class="flex items-center space-x-2 px-4 py-2 hover:bg-red-600 transition"
         >
-          <img src="/img/User.png" alt="My Icon" width="20" />
-          <span v-if="isSidebarOpen">Profil</span>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M15 11a3 3 0 11-6 0 3 3 0 016 0zm4 8a8 8 0 10-8 8 8 8 0 008-8z"
+            />
+          </svg>
+          <span v-if="isSidebarOpen">Profile</span>
         </Link>
 
-        <!-- Logout Menu -->
         <Link
           :href="route('logout')"
           method="post"
           as="button"
-          :class="{
-            'bg-white/50 text-white-500': route().current('logout'),
-            'hover:bg-red-600': !route().current('logout'),
-          }"
-          class="flex items-center space-x-2 px-4 py-2 rounded transition"
+          class="flex items-center space-x-2 px-4 py-2 hover:bg-red-600 transition"
         >
-          <img src="/img/SignOut.png" alt="My Icon" width="20" />
-          <span v-if="isSidebarOpen">Logout</span>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M15 12H3m12 0l-4-4m4 4l-4 4"
+            />
+          </svg>
+          <span v-if="isSidebarOpen">Log Out</span>
         </Link>
       </nav>
     </div>
 
     <!-- Main Content -->
     <div class="flex-1">
-      <header v-if="$slots.header">
+      <header class="bg-white shadow" v-if="$slots.header">
         <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
           <slot name="header" />
         </div>
