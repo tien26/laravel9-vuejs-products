@@ -63,7 +63,6 @@ class ProductController extends Controller
     public function update(Request $request, $id)
     {
         $product = Product::findOrFail($id);
-        $product = Product::find($id);
         if (!$product) {
             return response()->json(['message' => 'id tidak ditemukan' . $id]);
         }
@@ -73,7 +72,7 @@ class ProductController extends Controller
             'category_id' => 'nullable|integer',
             'price' => 'nullable|numeric|min:0',
             'stock' => 'nullable|integer|min:0',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'image' => 'nullable|image|mimes:jpg,png|max:100',
         ]);
 
         if ($request->hasFile('image')) {

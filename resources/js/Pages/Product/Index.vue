@@ -75,7 +75,11 @@
                   <td class="border px-4 py-2">{{ index + 1 }}</td>
                   <td class="border px-2 py-1">
                     <img
-                      :src="`/storage/${product.image}`"
+                      :src="`${
+                        product.image
+                          ? '/storage/' + product.image
+                          : '/img/image.png'
+                      }`"
                       alt="Product Image"
                       class="w-10 object-cover"
                     />
@@ -90,18 +94,20 @@
                   </td>
                   <td class="border px-4 py-2">{{ product.stock }}</td>
                   <td class="border px-2 py-1">
-                    <button
-                      @click="deleteProduct(product.id)"
-                      class="px-1 text-xs rounded"
-                    >
-                      <img src="/img/delete.png" alt="Delete" class="w-4" />
-                    </button>
-                    <button
-                      @click="addProduct(product.id)"
-                      class="px-1 text-xs rounded ml-2"
-                    >
-                      <img src="/img/edit.png" alt="Edit" class="w-4" />
-                    </button>
+                    <div class="inline-flex space-x-2">
+                      <button
+                        @click="deleteProduct(product.id)"
+                        class="px-1 text-xs rounded"
+                      >
+                        <img src="/img/delete.png" alt="Delete" class="w-4" />
+                      </button>
+                      <Link
+                        :href="route('products.edit', { id: product.id })"
+                        class="px-1 text-xs rounded"
+                      >
+                        <img src="/img/edit.png" alt="Edit" class="w-4" />
+                      </Link>
+                    </div>
                   </td>
                 </tr>
               </tbody>

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductExportController;
 use Illuminate\Http\Request;
@@ -23,6 +24,8 @@ Route::get('/products', [ProductController::class, 'apiIndex']);
 Route::post('/products', [ProductController::class, 'store']);
 Route::put('/products/{id}', [ProductController::class, 'update']);
 Route::delete('products/{product}', [ProductController::class, 'destroy']);
+
+Route::put('/users/{id}', [RegisteredUserController::class, 'update']);
 
 Route::get('/products/export', [ProductExportController::class, 'export']);
 Route::get('/categories', [ProductController::class, 'getCategories']);

@@ -13,22 +13,38 @@ const user = usePage().props.auth.user;
 
 // Form data
 const form = useForm({
+  id: user.id,
   name: user.name,
   position: user.position,
-  photo: null, // Tambahkan untuk menyimpan gambar
+  image: null, // Tambahkan untuk menyimpan gambar
+  _method: "PUT", // Tambahkan untuk menyimpan gambar
 });
 
+console.log(form);
+
 // State untuk gambar preview
-const previewImage = ref(user.photo_url || "/img/Frame98700.png"); // Default jika tidak ada gambar dari database
+const previewImage = ref(user.image || "/img/Frame98700.png"); // Default jika tidak ada gambar dari database
 
 // Fungsi untuk menangani perubahan input file
-const handleImageChange = (event) => {
-  console.log(user, "USER");
-
+const handleImageChange = async (event) => {
   const file = event.target.files[0];
   if (file) {
-    form.photo = file; // Simpan file gambar di form
+    form.image = file; // Simpan file gambar di form
     previewImage.value = URL.createObjectURL(file); // Tampilkan gambar preview
+  }
+
+  try {
+    if (form.photo) {
+      form._method = "PUT";
+      form.image = previewImage;
+      console.log(form, "EDIT");
+
+      await axios.post(`/api/users/${form.id}`, form);
+      alert("User updated successfully");
+    }
+  } catch (error) {
+    console.error("Error submitting form:", error);
+    alert("Failed to save user");
   }
 };
 </script>

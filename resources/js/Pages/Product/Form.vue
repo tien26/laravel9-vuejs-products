@@ -11,46 +11,47 @@
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
           <div class="p-6 bg-white border-b border-gray-200">
             <form @submit.prevent="submitForm" class="space-y-4">
-              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
-                <!-- Kolom pertama: Product Name dan Category -->
-                <div>
+              <div class="flex-1 grid grid-cols-6 gap-4">
+                <div class="col-span-3">
                   <label
                     for="name"
-                    class="block text-sm font-medium text-gray-700"
-                    >Product Name</label
+                    class="block text-sm font-medium text-gray-700 mb-2"
                   >
+                    Nama Kandidat
+                  </label>
                   <input
-                    id="name"
                     type="text"
+                    id="name"
                     v-model="form.name"
                     class="mt-1 block w-full border border-gray-300 rounded px-3 py-2 text-sm"
                     required
                   />
                 </div>
 
-                <div>
+                <div class="col-span-3">
                   <label
-                    for="category"
-                    class="block text-sm font-medium text-gray-700"
-                    >Category</label
+                    for="catgeory"
+                    class="block text-sm font-medium text-gray-700 mb-2"
                   >
+                    Category
+                  </label>
                   <select
-                    id="category"
                     v-model="form.category_id"
                     class="mt-1 block w-full border border-gray-300 rounded px-3 py-2 text-sm"
                     required
                   >
-                    <option value="" disabled>Select a category</option>
+                    <option value="">Pilih Category</option>
                     <option
                       v-for="category in categories"
-                      :key="category.id"
+                      :key="category.name"
                       :value="category.id"
                     >
                       {{ category.name }}
                     </option>
                   </select>
                 </div>
-
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 <!-- Kolom kedua: Price, Price Buy, dan Stock -->
                 <div>
                   <label
@@ -74,6 +75,7 @@
                     >Price Buy</label
                   >
                   <input
+                    disabled
                     id="price_buy"
                     type="number"
                     v-model="form.price_buy"
@@ -104,19 +106,34 @@
                     class="block text-sm font-medium text-gray-700"
                     >Image</label
                   >
-                  <input
-                    id="image"
-                    type="file"
-                    @change="handleImageUpload"
-                    class="mt-1 block w-full border border-gray-300 rounded px-3 py-2 text-sm"
-                  />
-                  <div v-if="form.image_preview" class="mt-2">
+
+                  <!-- Custom Upload Button -->
+                  <label
+                    for="image"
+                    class="relative cursor-pointer w-full h-32 border border-gray-300 rounded px-3 py-2 flex justify-center items-center"
+                  >
+                    <!-- Icon PNG centered in the middle -->
+                    <div v-if="form.image_preview" class="mt-2">
+                      <img
+                        :src="form.image_preview"
+                        alt="Preview"
+                        class="w-20 h-20 object-contain"
+                      />
+                    </div>
                     <img
-                      :src="form.image_preview"
-                      alt="Preview"
-                      class="w-20 h-20 object-cover"
+                      v-else
+                      src="/img/image.png"
+                      alt="Upload Icon"
+                      class="w-12 h-12 object-contain"
                     />
-                  </div>
+                    <span class="sr-only">Upload Image</span>
+                    <input
+                      id="image"
+                      type="file"
+                      @change="handleImageUpload"
+                      class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    />
+                  </label>
                 </div>
               </div>
 
@@ -127,12 +144,12 @@
                 >
                   Batalkan
                 </Link>
-                <Link
-                  :href="route('products')"
+                <button
+                  type="submit"
                   class="bg-blue-500 px-5 py-1 text-white text-sm rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 hover:bg-blue-600"
                 >
                   Simpan
-                </Link>
+                </button>
               </div>
             </form>
           </div>
@@ -143,7 +160,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from "vue";
+import { ref, reactive, onMounted, computed, watch } from "vue";
 import axios from "axios";
 import { usePage } from "@inertiajs/vue3";
 import AuthenticatedLayout from "../../Layouts/AuthenticatedLayout.vue";
@@ -163,6 +180,14 @@ const form = reactive({
 
 const categories = ref([]);
 const isEdit = ref(false);
+
+const price_buy = computed(() => {
+  return form.price * 1.3;
+});
+
+watch(price_buy, (newPriceBuy) => {
+  form.price_buy = newPriceBuy;
+});
 
 // Fetch categories from API
 const fetchCategories = async () => {
@@ -194,6 +219,9 @@ const submitForm = async () => {
   if (form.image) {
     formData.append("image", form.image);
   }
+  if (isEdit) {
+    formData.append("_method", "PUT");
+  }
 
   try {
     if (isEdit.value) {
@@ -207,11 +235,6 @@ const submitForm = async () => {
     console.error("Error submitting form:", error);
     alert("Failed to save product");
   }
-};
-
-// Cancel action (go back)
-const cancel = () => {
-  window.history.back();
 };
 
 // Populate form data for edit
@@ -228,6 +251,7 @@ onMounted(() => {
     form.price = product.price;
     form.price_buy = product.price_buy;
     form.stock = product.stock;
+    form._method = "PUT";
     form.image_preview = `/storage/${product.image}`;
   }
 });
