@@ -30,6 +30,7 @@ class ProductsExport implements FromCollection, WithHeadings, WithMapping
             'Category',
             'Price',
             'Price Buy',
+            'Stock'
         ];
     }
     // Memetakan data produk ke format yang sesuai
@@ -41,6 +42,7 @@ class ProductsExport implements FromCollection, WithHeadings, WithMapping
             $product->category->name,
             $product->price,
             $product->price_buy,
+            $product->stock,
         ];
     }
 

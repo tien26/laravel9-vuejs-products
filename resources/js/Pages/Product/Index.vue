@@ -73,7 +73,7 @@
                   <td class="border px-4 py-2">{{ index + 1 }}</td>
                   <td class="border px-2 py-1">
                     <img
-                      src="/img/image-2.png"
+                      :src="`/storage/${product.image}`"
                       alt="Product Image"
                       class="w-10 object-cover"
                     />
@@ -86,7 +86,7 @@
                   <td class="border px-4 py-2">
                     {{ formatRupiah(product.price_buy) }}
                   </td>
-                  <td class="border px-4 py-2">Stok Produk</td>
+                  <td class="border px-4 py-2">{{ product.stock }}</td>
                   <td class="border px-2 py-1">
                     <!-- Tombol Edit dan Hapus -->
                     <button

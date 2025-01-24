@@ -40,7 +40,7 @@ const submit = () => {
         <form @submit.prevent="submit" class="w-full max-w-sm">
           <div class="flex items-center justify-center mb-2">
             <img src="/img/bag.png" alt="my icon" width="50" />
-            <span class="text-2xl font-bold text-grey-600"> MY APP </span>
+            <span class="text-2xl font-bold text-grey-600"> SIMS WEB APP</span>
           </div>
 
           <div class="text-center text-2xl font-semibold mb-6">
@@ -79,6 +79,12 @@ const submit = () => {
           </div>
 
           <div class="flex items-center justify-end mt-4">
+            <Link
+              :href="route('register')"
+              class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              Create an account
+            </Link>
             <PrimaryButton
               class="ml-4 bg-red-500"
               :class="{ 'opacity-25': form.processing }"

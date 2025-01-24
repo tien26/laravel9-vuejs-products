@@ -11,9 +11,6 @@ class ProductExportController extends Controller
 {
     public function export(Request $request)
     {
-        // $categoryId = $request->input('category');
-
-        // Jika tidak ada kategori yang dipilih, export semua produk
         $products = Product::with('category')
             ->when($request->search, function ($query, $search) {
                 $query->where('name', 'like', "%$search%");
@@ -24,12 +21,6 @@ class ProductExportController extends Controller
                 });
             })
             ->get();
-        // $query = Product::query();
-        // if ($categoryId) {
-        //     $query->where('category_id', $categoryId);
-        // }
-        // $products = $query->get();
-
         return Excel::download(new ProductsExport($products), 'products.xlsx');
     }
 }

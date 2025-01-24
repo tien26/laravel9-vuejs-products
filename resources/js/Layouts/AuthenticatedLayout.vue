@@ -19,7 +19,7 @@ const isSidebarOpen = ref(true);
       <div class="h-16 flex items-center justify-between px-4">
         <span
           v-if="isSidebarOpen"
-          class="flex items-center text-lg font-semibold"
+          class="flex items-center text-sm font-semibold"
         >
           <img class="m-2" src="/img/Handbag.png" alt="My Icon" width="20" />
           SIMS WEB APP
@@ -62,7 +62,7 @@ const isSidebarOpen = ref(true);
       </div>
 
       <!-- Sidebar Navigation -->
-      <nav class="mt-4 flex flex-col space-y-2">
+      <nav class="mt-4 flex flex-col space-y-2 text-sm">
         <!-- Dashboard Menu -->
         <Link
           :href="route('products')"
