@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductExportController;
 use App\Http\Controllers\ProfileController;
+use App\Models\Product;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -45,6 +46,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/products', function () {
         return Inertia::render('Product/Index');
     })->name('products');
+
+    Route::get('/products/form', function () {
+        return Inertia::render('Product/Form');
+    })->name('products.form');
+
+    Route::get('/products/edit/{id}', function ($id) {
+        $product = Product::findOrFail($id);
+        return Inertia::render('Product/Form', [
+            'product' => $product,
+        ]);
+    })->name('products.edit');
 });
 
 

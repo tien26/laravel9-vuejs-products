@@ -27,14 +27,14 @@ class ProductController extends Controller
 
     public function getCategories(Request $request)
     {
-        $categories = Category::all(); // Ambil semua kategori
+        $categories = Category::all();
         return response()->json($categories);
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255|unique:products,name', // Nama produk harus unik
+            'name' => 'required|string|max:255|unique:products,name',
             'category_id' => 'required|integer',
             'price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
@@ -69,7 +69,7 @@ class ProductController extends Controller
         }
 
         $request->validate([
-            'name' => 'nullable|string|max:255|unique:products,name,' . $product->id, // Unik kecuali produk ini
+            'name' => 'nullable|string|max:255|unique:products,name,' . $product->id,
             'category_id' => 'nullable|integer',
             'price' => 'nullable|numeric|min:0',
             'stock' => 'nullable|integer|min:0',
@@ -100,17 +100,13 @@ class ProductController extends Controller
 
     public function destroy($productId)
     {
-        // Mencari produk berdasarkan ID
         $product = Product::find($productId);
 
         if (!$product) {
             return response()->json(['message' => 'Product not found'], 404);
         }
 
-        // Menghapus produk
         $product->delete();
-
-        // Mengembalikan respons sukses
         return response()->json(['message' => 'Product deleted successfully']);
     }
 }

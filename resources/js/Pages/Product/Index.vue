@@ -39,17 +39,19 @@
               <!-- Right: Export and Add buttons -->
               <div class="flex space-x-2">
                 <button
-                  @click="exportToExcel()"
+                  @click="exportToExcel"
                   class="bg-green-600 text-white px-2 py-1 text-sm"
                 >
-                  Export Excle
+                  Export Excel
                 </button>
-                <button
-                  @click="addProduct()"
-                  class="bg-red-500 text-white px-2 py-1 text-sm"
+
+                <!-- Link to 'Add Product' page using route() -->
+                <Link
+                  :href="route('products.form')"
+                  class="bg-red-500 text-white px-2 py-1 text-sm rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 hover:bg-red-600"
                 >
                   Tambah Produk
-                </button>
+                </Link>
               </div>
             </div>
 
@@ -88,7 +90,6 @@
                   </td>
                   <td class="border px-4 py-2">{{ product.stock }}</td>
                   <td class="border px-2 py-1">
-                    <!-- Tombol Edit dan Hapus -->
                     <button
                       @click="deleteProduct(product.id)"
                       class="px-1 text-xs rounded"
@@ -131,163 +132,126 @@
     </div>
   </AuthenticatedLayout>
 </template>
-  
-  <script>
-import AuthenticatedLayout from "../../Layouts/AuthenticatedLayout.vue";
-import { ref } from "vue";
+
+<script setup>
+import { ref, onMounted } from "vue";
+import { Inertia } from "@inertiajs/inertia";
 import axios from "axios";
+import AuthenticatedLayout from "../../Layouts/AuthenticatedLayout.vue";
+import { Link } from "@inertiajs/vue3";
 
-export default {
-  components: {
-    AuthenticatedLayout,
-  },
-  setup() {
-    const products = ref([]);
-    const filters = ref({
-      search: "",
-      category: "",
-    });
-    const categories = ref([]);
-    const iconUrl = "/img/Package.png";
+const products = ref([]);
+const filters = ref({
+  search: "",
+  category: "",
+});
+const categories = ref([]);
+const pagination = ref({
+  prev_page_url: null,
+  next_page_url: null,
+});
 
-    // Fungsi untuk fetch kategori
-    const fetchCategories = async () => {
-      try {
-        const response = await axios.get("/api/categories");
-        categories.value = response.data;
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      }
-    };
-
-    // Menyimpan URL pagination
-    const pagination = ref({
-      prev_page_url: null,
-      next_page_url: null,
-    });
-
-    const exportToExcel = async () => {
-      let url = "/api/products/export";
-
-      // Menambahkan query parameter jika ada filter yang diterapkan
-      const queryParams = new URLSearchParams();
-
-      if (filters.value.search) {
-        queryParams.append("search", filters.value.search);
-      }
-
-      if (filters.value.category) {
-        queryParams.append("category", filters.value.category);
-      }
-
-      if (queryParams.toString()) {
-        url = `${url}?${queryParams.toString()}`;
-      }
-
-      try {
-        const response = await axios.get(url, { responseType: "blob" });
-
-        const fileName = "products.xlsx";
-        const blob = new Blob([response.data], {
-          type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        });
-        const link = document.createElement("a");
-        link.href = URL.createObjectURL(blob);
-        link.download = fileName;
-        link.click();
-      } catch (error) {
-        console.error("Error exporting data:", error);
-      }
-    };
-
-    const addProduct = (params) => {
-      console.log(params, "ADD");
-    };
-
-    const deleteProduct = async (productId) => {
-      console.log("Delete product", productId);
-      try {
-        // Menampilkan konfirmasi sebelum menghapus
-        if (confirm(`Apakah anda yakin data akan dihapus ?`)) {
-          const response = await axios.delete(`/api/products/${productId}`);
-          // jika berhasil panggil products
-          fetchProducts();
-
-          alert("Product deleted successfully");
-        }
-      } catch (error) {
-        console.error("Error deleting product:", error);
-        alert("Failed to delete product");
-      }
-    };
-
-    const formatRupiah = (angka) => {
-      const formatter = new Intl.NumberFormat("id-ID", {
-        style: "currency",
-        currency: "IDR",
-        // Hapus angka di belakang koma
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
-      });
-      return formatter.format(angka);
-    };
-
-    // Fungsi untuk fetch data produk dan pagination
-    const fetchProducts = async (url = "/api/products") => {
-      let finalUrl = url;
-
-      // Cek apakah search dan category sudah diisi
-      if (filters.value.search || filters.value.category) {
-        finalUrl = `${url}?search=${encodeURIComponent(
-          filters.value.search
-        )}&category=${encodeURIComponent(filters.value.category)}`;
-      }
-
-      try {
-        const response = await axios.get(finalUrl);
-        products.value = response.data;
-
-        // Update URL pagination setelah data di-fetch
-        pagination.value = {
-          prev_page_url: response.data.prev_page_url,
-          next_page_url: response.data.next_page_url,
-        };
-      } catch (error) {
-        console.error("Error fetching products:", error);
-      }
-    };
-
-    // Fungsi search (untuk reset pagination ke halaman pertama)
-    const searchProducts = () => {
-      pagination.value = {
-        prev_page_url: null,
-        next_page_url: null,
-      };
-      fetchProducts(); // fetch data produk berdasarkan filter
-    };
-
-    // Panggil load data
-    fetchProducts();
-    fetchCategories();
-
-    return {
-      products,
-      filters,
-      pagination,
-      fetchProducts,
-      searchProducts,
-      formatRupiah,
-      exportToExcel,
-      categories,
-      addProduct,
-      iconUrl,
-      deleteProduct,
-    };
-  },
+const fetchCategories = async () => {
+  try {
+    const response = await axios.get("/api/categories");
+    categories.value = response.data;
+  } catch (error) {
+    console.error("Error fetching categories:", error);
+  }
 };
+
+const exportToExcel = async () => {
+  let url = "/api/products/export";
+  const queryParams = new URLSearchParams();
+
+  if (filters.value.search) {
+    queryParams.append("search", filters.value.search);
+  }
+
+  if (filters.value.category) {
+    queryParams.append("category", filters.value.category);
+  }
+
+  if (queryParams.toString()) {
+    url = `${url}?${queryParams.toString()}`;
+  }
+
+  try {
+    const response = await axios.get(url, { responseType: "blob" });
+    const fileName = "products.xlsx";
+    const blob = new Blob([response.data], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = fileName;
+    link.click();
+  } catch (error) {
+    console.error("Error exporting data:", error);
+  }
+};
+
+const addProduct = (id) => {
+  console.log(id, "ADD");
+};
+
+const deleteProduct = async (productId) => {
+  if (confirm("Apakah anda yakin data akan dihapus ?")) {
+    try {
+      await axios.delete(`/api/products/${productId}`);
+      fetchProducts(); // Re-fetch products after deletion
+      alert("Product deleted successfully");
+    } catch (error) {
+      console.error("Error deleting product:", error);
+      alert("Failed to delete product");
+    }
+  }
+};
+
+const formatRupiah = (angka) => {
+  const formatter = new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  });
+  return formatter.format(angka);
+};
+
+const fetchProducts = async (url = "/api/products") => {
+  let finalUrl = url;
+
+  if (filters.value.search || filters.value.category) {
+    finalUrl = `${url}?search=${encodeURIComponent(
+      filters.value.search
+    )}&category=${encodeURIComponent(filters.value.category)}`;
+  }
+
+  try {
+    const response = await axios.get(finalUrl);
+    products.value = response.data;
+    pagination.value = {
+      prev_page_url: response.data.prev_page_url,
+      next_page_url: response.data.next_page_url,
+    };
+  } catch (error) {
+    console.error("Error fetching products:", error);
+  }
+};
+
+const searchProducts = () => {
+  pagination.value = { prev_page_url: null, next_page_url: null };
+  fetchProducts(); // Fetch products with applied filters
+};
+
+// Initial data fetch on component mount
+onMounted(() => {
+  fetchProducts();
+  fetchCategories();
+});
 </script>
-  
-  <style scoped>
+
+<style scoped>
 table {
   width: 100%;
 }
@@ -296,4 +260,3 @@ td {
   text-align: left;
 }
 </style>
-  
