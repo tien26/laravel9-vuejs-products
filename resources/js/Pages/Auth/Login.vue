@@ -1,5 +1,4 @@
 <script setup>
-import Checkbox from "@/Components/Checkbox.vue";
 import GuestLayout from "@/Layouts/GuestLayout.vue";
 import InputError from "@/Components/InputError.vue";
 import InputLabel from "@/Components/InputLabel.vue";
@@ -13,8 +12,8 @@ defineProps({
 });
 
 const form = useForm({
-  email: "martin@test.com",
-  password: "11111111",
+  email: "",
+  password: "",
   remember: false,
 });
 

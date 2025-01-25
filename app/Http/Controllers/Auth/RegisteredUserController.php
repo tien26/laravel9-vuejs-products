@@ -57,11 +57,11 @@ class RegisteredUserController extends Controller
     {
         $user = User::findOrFail($id);
         if (!$user) {
-            return response()->json(['message' => 'id tidak ditemukan' . $id]);
+            return response()->json(['message' => 'User not found']);
         }
 
         $request->validate([
-            'image' => 'required|image|mimes:jpg,png|max:100',
+            'image' => 'nullable|image|mimes:jpg,png|max:100',
         ]);
 
         if ($request->hasFile('image')) {
@@ -73,12 +73,12 @@ class RegisteredUserController extends Controller
             $imageName = 'user-' . time() . '.' . $image->getClientOriginalExtension();
             $imagePath = $image->storeAs('users', $imageName, 'public');
 
-            // Update nama file ke database
             $user->image = $imagePath;
         }
-        $input = $request->only(['name', 'email', 'password', 'position', 'image']);
+
+        $input = $request->only(['name', 'email', 'position']);
         $user->update($input);
 
-        return response()->json(['message' => 'Image berhasil diperbarui', 'product' => $user]);
+        return response()->json(['message' => 'User updated successfully', 'product' => $user]);
     }
 }

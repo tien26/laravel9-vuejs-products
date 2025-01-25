@@ -10,9 +10,7 @@
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
           <div class="p-6 bg-white border-b border-gray-200">
-            <!-- Form and buttons container -->
             <div class="mb-4 flex justify-between items-center">
-              <!-- Left: Search form and select box -->
               <form @submit.prevent="searchProducts" class="flex space-x-4">
                 <input
                   type="text"
@@ -36,7 +34,6 @@
                 </select>
               </form>
 
-              <!-- Right: Export and Add buttons -->
               <div class="flex space-x-2">
                 <button
                   @click="exportToExcel"
@@ -45,7 +42,6 @@
                   Export Excel
                 </button>
 
-                <!-- Link to 'Add Product' page using route() -->
                 <Link
                   :href="route('products.form')"
                   class="bg-red-500 text-white px-2 py-1 text-sm rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 hover:bg-red-600"
@@ -205,7 +201,7 @@ const deleteProduct = async (productId) => {
   if (confirm("Apakah anda yakin data akan dihapus ?")) {
     try {
       await axios.delete(`/api/products/${productId}`);
-      fetchProducts(); // Re-fetch products after deletion
+      fetchProducts();
       alert("Product deleted successfully");
     } catch (error) {
       console.error("Error deleting product:", error);
@@ -247,10 +243,9 @@ const fetchProducts = async (url = "/api/products") => {
 
 const searchProducts = () => {
   pagination.value = { prev_page_url: null, next_page_url: null };
-  fetchProducts(); // Fetch products with applied filters
+  fetchProducts();
 };
 
-// Initial data fetch on component mount
 onMounted(() => {
   fetchProducts();
   fetchCategories();

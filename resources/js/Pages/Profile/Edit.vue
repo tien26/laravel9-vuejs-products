@@ -11,35 +11,40 @@ defineProps({
 
 const user = usePage().props.auth.user;
 
-// Form data
 const form = useForm({
   id: user.id,
   name: user.name,
+  email: user.email,
   position: user.position,
-  image: null, // Tambahkan untuk menyimpan gambar
-  _method: "PUT", // Tambahkan untuk menyimpan gambar
+  image: user.image,
 });
 
-console.log(form);
+console.log(form, "FORM IMAGE");
+const img = form.image ? "/storage/" + form.image : "/img/Frame98700.png";
+const previewImage = ref(img);
 
-// State untuk gambar preview
-const previewImage = ref(user.image || "/img/Frame98700.png"); // Default jika tidak ada gambar dari database
-
-// Fungsi untuk menangani perubahan input file
 const handleImageChange = async (event) => {
   const file = event.target.files[0];
   if (file) {
-    form.image = file; // Simpan file gambar di form
-    previewImage.value = URL.createObjectURL(file); // Tampilkan gambar preview
+    form.image = file;
+    previewImage.value = URL.createObjectURL(file);
   }
 
   try {
-    if (form.photo) {
-      form._method = "PUT";
-      form.image = previewImage;
-      console.log(form, "EDIT");
+    if (form.image) {
+      const formData = new FormData();
 
-      await axios.post(`/api/users/${form.id}`, form);
+      formData.append("name", form.name);
+      formData.append("email", form.email);
+      formData.append("position", form.position);
+      formData.append("image", form.image);
+      formData.append("_method", "PUT");
+
+      const response = await axios.post(`/api/users/${form.id}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       alert("User updated successfully");
     }
   } catch (error) {
@@ -59,16 +64,13 @@ const handleImageChange = async (event) => {
 
     <div class="py-6 px-6">
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-        <!-- Image Preview with Upload Button -->
         <div class="flex items-center space-x-4">
-          <!-- Gambar Preview -->
           <div class="relative">
             <img
               :src="previewImage"
               alt="Profile Picture"
               class="w-32 h-32 rounded-full object-cover shadow-md"
             />
-            <!-- Icon Pencil -->
             <label
               for="photo"
               class="absolute bottom-0 right-0 bg-white p-2 rounded-full border shadow cursor-pointer"
@@ -88,7 +90,6 @@ const handleImageChange = async (event) => {
                 />
               </svg>
             </label>
-            <!-- Input File (Hidden) -->
             <input
               type="file"
               id="photo"

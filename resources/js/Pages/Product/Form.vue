@@ -52,7 +52,6 @@
                 </div>
               </div>
               <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                <!-- Kolom kedua: Price, Price Buy, dan Stock -->
                 <div>
                   <label
                     for="price"
@@ -99,7 +98,6 @@
                   />
                 </div>
 
-                <!-- Bagian upload gambar, lebar penuh -->
                 <div class="col-span-1 sm:col-span-2 lg:col-span-3">
                   <label
                     for="image"
@@ -107,12 +105,10 @@
                     >Image</label
                   >
 
-                  <!-- Custom Upload Button -->
                   <label
                     for="image"
                     class="relative cursor-pointer w-full h-32 border border-gray-300 rounded px-3 py-2 flex justify-center items-center"
                   >
-                    <!-- Icon PNG centered in the middle -->
                     <div v-if="form.image_preview" class="mt-2">
                       <img
                         :src="form.image_preview"
@@ -166,7 +162,6 @@ import { usePage } from "@inertiajs/vue3";
 import AuthenticatedLayout from "../../Layouts/AuthenticatedLayout.vue";
 import { Link } from "@inertiajs/vue3";
 
-// Reactive form state
 const form = reactive({
   id: null,
   name: "",
@@ -189,7 +184,6 @@ watch(price_buy, (newPriceBuy) => {
   form.price_buy = newPriceBuy;
 });
 
-// Fetch categories from API
 const fetchCategories = async () => {
   try {
     const response = await axios.get("/api/categories");
@@ -199,7 +193,6 @@ const fetchCategories = async () => {
   }
 };
 
-// Handle image upload
 const handleImageUpload = (event) => {
   const file = event.target.files[0];
   if (file) {
@@ -208,7 +201,6 @@ const handleImageUpload = (event) => {
   }
 };
 
-// Submit form data
 const submitForm = async () => {
   const formData = new FormData();
   formData.append("name", form.name);
@@ -237,7 +229,6 @@ const submitForm = async () => {
   }
 };
 
-// Populate form data for edit
 const page = usePage();
 onMounted(() => {
   fetchCategories();
