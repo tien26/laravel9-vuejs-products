@@ -9,7 +9,7 @@ defineProps({
   status: String,
 });
 
-const user = usePage().props.auth.user;
+const user = JSON.parse(localStorage.getItem("user"));
 
 const form = useForm({
   id: user.id,
@@ -42,9 +42,11 @@ const handleImageChange = async (event) => {
 
       const response = await axios.post(`/api/users/${form.id}`, formData, {
         headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
           "Content-Type": "multipart/form-data",
         },
       });
+      localStorage.setItem("user", JSON.stringify(response.data.user));
       alert("User updated successfully");
     }
   } catch (error) {

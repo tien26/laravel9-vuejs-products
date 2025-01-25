@@ -18,9 +18,20 @@ const form = useForm({
 });
 
 const submit = () => {
-  form.post(route("login"), {
-    onFinish: () => form.reset("password"),
-  });
+  axios
+    .post("/api/login", {
+      email: form.email,
+      password: form.password,
+    })
+    .then((response) => {
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("user", JSON.stringify(response.data.user));
+      window.location.href = "/products";
+    })
+    .catch((error) => {
+      console.error(error);
+      form.errors = error.response.data.errors || {};
+    });
 };
 </script>
 
@@ -78,12 +89,12 @@ const submit = () => {
           </div>
 
           <div class="flex items-center justify-end mt-4">
-            <Link
+            <!-- <Link
               :href="route('register')"
               class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
               Create an account
-            </Link>
+            </Link> -->
             <PrimaryButton
               class="ml-4 bg-red-500"
               :class="{ 'opacity-25': form.processing }"

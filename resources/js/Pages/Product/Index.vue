@@ -155,7 +155,11 @@ const pagination = ref({
 
 const fetchCategories = async () => {
   try {
-    const response = await axios.get("/api/categories");
+    const response = await axios.get("/api/categories", {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
     categories.value = response.data;
   } catch (error) {
     console.error("Error fetching categories:", error);
@@ -179,7 +183,12 @@ const exportToExcel = async () => {
   }
 
   try {
-    const response = await axios.get(url, { responseType: "blob" });
+    const response = await axios.get(url, {
+      responseType: "blob",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`, // Menambahkan token di header Authorization
+      },
+    });
     const fileName = "products.xlsx";
     const blob = new Blob([response.data], {
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -200,7 +209,11 @@ const addProduct = (id) => {
 const deleteProduct = async (productId) => {
   if (confirm("Apakah anda yakin data akan dihapus ?")) {
     try {
-      await axios.delete(`/api/products/${productId}`);
+      await axios.delete(`/api/products/${productId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`, // Menambahkan token di header Authorization
+        },
+      });
       fetchProducts();
       alert("Product deleted successfully");
     } catch (error) {
@@ -230,7 +243,11 @@ const fetchProducts = async (url = "/api/products") => {
   }
 
   try {
-    const response = await axios.get(finalUrl);
+    const response = await axios.get(finalUrl, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
     products.value = response.data;
     pagination.value = {
       prev_page_url: response.data.prev_page_url,

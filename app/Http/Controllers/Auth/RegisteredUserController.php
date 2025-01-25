@@ -79,6 +79,6 @@ class RegisteredUserController extends Controller
         $input = $request->only(['name', 'email', 'position']);
         $user->update($input);
 
-        return response()->json(['message' => 'User updated successfully', 'product' => $user]);
+        return response()->json(['message' => 'User updated successfully', 'user' => $user]);
     }
 }

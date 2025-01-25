@@ -2,8 +2,29 @@
 import { ref } from "vue";
 import { Link } from "@inertiajs/vue3";
 
-// Deklarasi properti untuk state sidebar
 const isSidebarOpen = ref(true);
+
+const logout = async () => {
+  try {
+    await axios.post(
+      "/api/logout",
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    );
+
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+
+    window.location.href = "/login";
+  } catch (error) {
+    console.error("Logout error:", error);
+    alert("Logout failed. Please try again.");
+  }
+};
 </script>
 
 <template>
@@ -89,11 +110,8 @@ const isSidebarOpen = ref(true);
           <span v-if="isSidebarOpen">Profil</span>
         </Link>
 
-        <!-- Logout Menu -->
-        <Link
-          :href="route('logout')"
-          method="post"
-          as="button"
+        <button
+          @click="logout"
           :class="{
             'bg-white/50 text-white-500': route().current('logout'),
             'hover:bg-red-600': !route().current('logout'),
@@ -102,7 +120,7 @@ const isSidebarOpen = ref(true);
         >
           <img src="/img/SignOut.png" alt="My Icon" width="20" />
           <span v-if="isSidebarOpen">Logout</span>
-        </Link>
+        </button>
       </nav>
     </div>
 

@@ -186,7 +186,11 @@ watch(price_buy, (newPriceBuy) => {
 
 const fetchCategories = async () => {
   try {
-    const response = await axios.get("/api/categories");
+    const response = await axios.get("/api/categories", {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`, // Menambahkan token di header Authorization
+      },
+    });
     categories.value = response.data;
   } catch (error) {
     console.error("Error fetching categories:", error);
@@ -211,16 +215,26 @@ const submitForm = async () => {
   if (form.image) {
     formData.append("image", form.image);
   }
-  if (isEdit) {
+  if (isEdit.value) {
     formData.append("_method", "PUT");
   }
 
   try {
     if (isEdit.value) {
-      await axios.post(`/api/products/${form.id}`, formData);
+      await axios.post(`/api/products/${form.id}`, formData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
       alert("Product updated successfully");
     } else {
-      await axios.post("/api/products", formData);
+      await axios.post("/api/products", formData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
       alert("Product added successfully");
     }
   } catch (error) {

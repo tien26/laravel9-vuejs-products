@@ -36,28 +36,26 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/products', function () {
-        return Inertia::render('Product/Index');
-    })->name('products');
+Route::get('/products', function () {
+    return Inertia::render('Product/Index');
+})->name('products');
 
-    Route::get('/products/form', function () {
-        return Inertia::render('Product/Form');
-    })->name('products.form');
+Route::get('/products/form', function () {
+    return Inertia::render('Product/Form');
+})->name('products.form');
 
-    Route::get('/products/edit/{id}', function ($id) {
-        $product = Product::findOrFail($id);
-        return Inertia::render('Product/Form', [
-            'product' => $product,
-        ]);
-    })->name('products.edit');
-});
+Route::get('/products/edit/{id}', function ($id) {
+    $product = Product::findOrFail($id);
+    return Inertia::render('Product/Form', [
+        'product' => $product,
+    ]);
+})->name('products.edit');
 
 
 require __DIR__ . '/auth.php';

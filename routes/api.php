@@ -1,9 +1,13 @@
 <?php
 
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductExportController;
+use App\Http\Controllers\UserController;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,25 +24,18 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-// Route::middleware('auth:sanctum')->group(function () {
-//     Route::get('/products', [ProductController::class, 'apiIndex']);
-//     Route::post('/products', [ProductController::class, 'store']);
-//     Route::put('/products/{id}', [ProductController::class, 'update']);
-//     Route::delete('products/{product}', [ProductController::class, 'destroy']);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/products', [ProductController::class, 'apiIndex']);
+    Route::post('/products', [ProductController::class, 'store']);
+    Route::put('/products/{id}', [ProductController::class, 'update']);
+    Route::delete('products/{product}', [ProductController::class, 'destroy']);
 
-//     Route::put('/users/{id}', [RegisteredUserController::class, 'update']);
+    Route::put('/users/{id}', [RegisteredUserController::class, 'update']);
 
-//     Route::get('/products/export', [ProductExportController::class, 'export']);
+    Route::get('/products/export', [ProductExportController::class, 'export']);
 
-//     Route::get('/categories', [ProductController::class, 'getCategories']);
-// });
+    Route::get('/categories', [ProductController::class, 'getCategories']);
+    Route::post('/logout', [UserController::class, 'destroy']);
+});
 
-Route::get('/products', [ProductController::class, 'apiIndex']);
-Route::post('/products', [ProductController::class, 'store']);
-Route::put('/products/{id}', [ProductController::class, 'update']);
-Route::delete('products/{product}', [ProductController::class, 'destroy']);
-
-Route::put('/users/{id}', [RegisteredUserController::class, 'update']);
-
-Route::get('/products/export', [ProductExportController::class, 'export']);
-Route::get('/categories', [ProductController::class, 'getCategories']);
+Route::post('/login', [UserController::class, 'login']);
